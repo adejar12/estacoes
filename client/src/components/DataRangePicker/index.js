@@ -6,17 +6,19 @@ import {
     LocalizationProvider
 } from "@material-ui/pickers";
 import DateFnsUtils from "@material-ui/pickers/adapter/date-fns"
+import ptBR from 'date-fns/locale/pt-BR';
 
 
-export default function DataRangePicker() {
-    const [selectedDate, handleDateChange] = React.useState([null, null]);
+export default function DataRangePicker({ selectedDate, onChange }) {
+
+
     return (
-        <LocalizationProvider dateAdapter={DateFnsUtils}>
+        <LocalizationProvider dateAdapter={DateFnsUtils} locale={ptBR}>
             <DateRangePicker
                 startText="Inicio"
                 endText="Fim"
                 value={selectedDate}
-                onChange={date => handleDateChange(date)}
+                onChange={date => onChange(date)}
                 renderInput={(startProps, endProps) => (
                     <>
                         <TextField {...startProps} />
@@ -25,6 +27,7 @@ export default function DataRangePicker() {
                     </>
                 )}
             />
-        </LocalizationProvider>)
+        </LocalizationProvider>
+    )
 }
 

@@ -1,14 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
-import Drawer from './components/Drawer'
 
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import { ptBR } from '@material-ui/core/locale';
+
+import App from './App';
+import Farmbox from './views/Farmbox'
+import Protector from './views/Protector'
+import Metos from './views/Metos'
+import Zeus from './views/Zeus'
 
 const theme = createMuiTheme({
   palette: {
@@ -21,7 +25,10 @@ ReactDOM.render(
     <BrowserRouter>
       <Switch>
         <Route exact path="/" component={App} />
-        <Route exact path="/drawer" component={Drawer} />
+        <Route exact path="/farmbox/pluviometria" component={Farmbox} />
+        <Route exact path="/Protector/pluviometria" component={Protector} />
+        <Route exact path="/Metos/pluviometria" component={Metos} />
+        <Route exact path="/Zeus/pluviometria" component={Zeus} />
       </Switch>
     </BrowserRouter>
   </ThemeProvider>,

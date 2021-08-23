@@ -20,6 +20,7 @@ import ExpandMore from '@material-ui/icons/ExpandMore';
 import Collapse from '@material-ui/core/Collapse';
 import StarBorder from '@material-ui/icons/StarBorder';
 
+import { Link } from 'react-router-dom'
 
 import Icon from '@mdi/react'
 import { mdiWeatherRainy } from '@mdi/js';
@@ -93,7 +94,7 @@ const useStylesMenu = makeStyles((theme) => ({
     },
 }));
 
-export default function MiniDrawer() {
+export default function MiniDrawer({ name }) {
     const classes = useStyles();
     const classesMenu = useStylesMenu();
 
@@ -103,16 +104,13 @@ export default function MiniDrawer() {
     const [itens, setItens] = React.useState([{
         name: "Farmbox",
         itens: [
-            "Pluviometria",
-            "Pragas",
-            "Colheita"
+            "Pluviometria"
         ]
     },
     {
         name: "Protector",
         itens: [
-            "Pluviometria",
-            "Pragas"
+            "Pluviometria"
         ]
     },
     {
@@ -165,7 +163,7 @@ export default function MiniDrawer() {
                         <MenuIcon />
                     </IconButton>
                     <Typography variant="h6" noWrap>
-                        Estações - GAPES
+                        {name}
                     </Typography>
                 </Toolbar>
             </AppBar>
@@ -192,9 +190,8 @@ export default function MiniDrawer() {
                     {itens.map((text, index) => (
                         <>
                             <ListItem button onClick={() => handleClick(index)} key={text.name}>
-                                <ListItemIcon><Icon path={mdiWeatherRainy}
-                                    title={text.name}
-                                    size={1} />
+                                <ListItemIcon>
+                                    <StarBorder />
                                 </ListItemIcon>
                                 <ListItemText primary={text.name} />
                                 {openMenu[index] ? <ExpandLess /> : <ExpandMore />}
@@ -202,13 +199,17 @@ export default function MiniDrawer() {
                             {
                                 text.itens.map((item) => (
                                     <Collapse in={openMenu[index]} timeout="auto" unmountOnExit>
-                                        <List component="div" disablePadding>
-                                            <ListItem button className={classesMenu.nested}>
-                                                <ListItemIcon>
-                                                    <StarBorder />
-                                                </ListItemIcon>
-                                                <ListItemText primary={item} />
-                                            </ListItem>
+                                        <List component="div" disablePadding >
+                                            <Link to={`/${text.name}/${item}`} style={{ textDecoration: 'none', color: "#000000DE" }}>
+                                                <ListItem button className={classesMenu.nested}>
+                                                    <ListItemIcon>
+                                                        <Icon path={mdiWeatherRainy}
+                                                            title={text.name}
+                                                            size={1} />
+                                                    </ListItemIcon>
+                                                    <ListItemText primary={item} />
+                                                </ListItem>
+                                            </Link>
                                         </List>
                                     </Collapse>
                                 ))
