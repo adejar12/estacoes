@@ -84,7 +84,7 @@ export default function Zeus() {
                     }
 
                     var objetoFinal = {
-                        associado: producers[i],
+                        productor: producers[i],
                         dadoEstacao: dadoEstacao
                     }
 
@@ -121,11 +121,11 @@ export default function Zeus() {
             tirarMedias()
 
             var novoProdutor = {
-                associado: pegarNomeProdutor(producers[i].associado.name),
-                latitude: producers[i].associado.lat,
-                longitude: producers[i].associado.lon,
-                talhao: pegarTalhao(producers[i].associado.name),
-                fazenda: pegarFazenda(producers[i].associado.name),
+                productor: pegarNomeProdutor(producers[i].productor.name),
+                latitude: producers[i].productor.lat,
+                longitude: producers[i].productor.lon,
+                talhao: pegarTalhao(producers[i].productor.name),
+                fazenda: pegarFazenda(producers[i].productor.name),
                 dataChuva: dataChuva
             }
 
@@ -194,7 +194,7 @@ export default function Zeus() {
 
     }
 
-    async function pegarDadoEstacao(usuario, associado, date) {
+    async function pegarDadoEstacao(usuario, productor, date) {
 
         var dadoEstacao = new Array();
 
@@ -206,7 +206,7 @@ export default function Zeus() {
         var dataPassada = date.getFullYear() + "-" + mes + "-" + date.getDate();
 
         var settings = {
-            "url": "http://www.cropnet.us/api/v1/pics/" + associado.picId + "/monitoring?start=" + dataPassada + "&end=" + dataNova + "",
+            "url": "http://www.cropnet.us/api/v1/pics/" + productor.picId + "/monitoring?start=" + dataPassada + "&end=" + dataNova + "",
             "method": "GET",
             "timeout": 0,
             "headers": {

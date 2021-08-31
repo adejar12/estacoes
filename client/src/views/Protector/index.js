@@ -154,7 +154,7 @@ export default function Farmbox() {
             let res = oneKey.name.split("-")
 
             let dado = {
-                associado: res[0],
+                productor: res[0],
                 fazenda: res[1],
                 latitude: "",
                 longitude: "",
@@ -166,7 +166,7 @@ export default function Farmbox() {
 
                 let date = oneProducer.name.split("-");
 
-                if (date[0] == dado.associado && date[1] == dado.fazenda) {
+                if (date[0] == dado.productor && date[1] == dado.fazenda) {
 
                     let pontosStaticos = await pegarPluviometria(token.access_token, empresa[0].id, oneKey.id)
 

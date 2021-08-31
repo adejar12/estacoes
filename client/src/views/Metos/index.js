@@ -47,11 +47,11 @@ export default function Metos() {
 
     function processarDadosMetos(dados) {
 
-        let associados = new Array();
+        let producers = new Array();
 
         for (var i = 0; i < dados.length; i++) {
             let associado = {
-                nomeProdutor: dados[i].nome_associado,
+                nomeProdutor: dados[i].nome_producer,
                 estacoes: "",
             }
 
@@ -76,7 +76,7 @@ export default function Metos() {
 
 
                 let objectEstacao = {
-
+                    nomeProdutor: dados[i].nome_producer,
                     longitude: "",
                     lagitude: "",
                     altitude: "",
@@ -92,11 +92,11 @@ export default function Metos() {
             }
 
             associado.estacoes = estacoes
-            associados.push(associado)
+            producers.push(associado)
 
         }
 
-        associados.forEach(umProdutor => {
+        producers.forEach(umProdutor => {
             umProdutor.estacoes.forEach(umaEstacao => {
                 let array = new Array();
                 umaEstacao.pluviometria.forEach(umPluviometro => {
@@ -118,7 +118,7 @@ export default function Metos() {
 
         setIsBusy(false);
 
-        exportarXLSX(gerarVetorXLSX(associados, "METOS"), "METOS")
+        exportarXLSX(gerarVetorXLSX(producers, "METOS"), "METOS")
 
     }
 
@@ -233,7 +233,7 @@ export default function Metos() {
 
         setIsBusy(true);
 
-        let associados = new Array();
+        let producers = new Array();
 
         await Promise.all(producerSelect.map(async umDado => {
             await Promise.all(selectedProducer.map(async oneProducerSelected => {
@@ -242,7 +242,7 @@ export default function Metos() {
                     let arrayDadoEstacaoProdutor = new Array();
 
                     let objetoProdutor = {
-                        nome_associado: umDado.name,
+                        nome_producer: umDado.name,
                         arrayPluviometria: "",
                         arrayDadoEstacao: "",
                     }
@@ -254,13 +254,13 @@ export default function Metos() {
 
                     objetoProdutor.arrayPluviometria = arrayPluviometriaProdutor;
                     objetoProdutor.arrayDadoEstacao = arrayDadoEstacaoProdutor;
-                    associados.push(objetoProdutor)
+                    producers.push(objetoProdutor)
                 }
             }))
 
         }))
 
-        processarDadosMetos(associados);
+        processarDadosMetos(producers);
 
     }
 

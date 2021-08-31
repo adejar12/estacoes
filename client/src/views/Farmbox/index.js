@@ -22,7 +22,7 @@ export default function Farmbox() {
     const [isBusy, setIsBusy] = useState(false);
     const [buffer, setBuffer] = useState(10);
     const [progress, setProgress] = useState(0);
-    const [producerSelect, setAssociadosSelect] = useState([]);
+    const [producerSelect, setProducerSelect] = useState([]);
     const [showAutoComplete, setShowAutoComplete] = useState(false)
 
     var dataChuva = new Array()
@@ -30,10 +30,11 @@ export default function Farmbox() {
 
     useEffect(() => {
         let array = new Array();
+
         keys[3].dados.map(oneKey => {
-            array.push(oneKey.associado)
+            array.push(oneKey)
         })
-        setAssociadosSelect(array);
+        setProducerSelect(array);
         setSelectedProducer(array);
         setShowAutoComplete(true)
     }, [])
@@ -49,26 +50,28 @@ export default function Farmbox() {
     async function getDateFarmBox() {
         setIsBusy(true);
 
-        let associados = new Array();
+        let producers = new Array();
 
-        await Promise.all(producerSelect(async oneKey => {
+        await Promise.all(producerSelect.map(async oneKey => {
             await Promise.all(selectedProducer.map(async (oneProducer, index) => {
+
                 setProgress(index * 10);
                 let objetoProdutor = {
-                    associado: oneProducer,
+                    productor: oneProducer.name,
                     arrayPluviometria: ""
                 }
+                if (oneKey.name === oneProducer.name) {
 
-                if (oneKey.associado === oneProducer) {
                     objetoProdutor.arrayPluviometria = await getRainFarmbox(oneKey.chave, 30)
-                    associados.push(objetoProdutor)
+                    producers.push(objetoProdutor)
                 }
             }))
         }))
 
-        processarDadosFarmbox(associados);
+        processarDadosFarmbox(producers);
         setProgress(100);
         setIsBusy(false);
+
         exportarXLSX(gerarVetorXLSX(dataChuva, "Farmbox"), "Farmbox")
 
     }
@@ -137,7 +140,7 @@ export default function Farmbox() {
                 let talhoes = umArrayPluviometrico.pluviometer.plantations;
 
                 talhoes.map(umTalhao => {
-                    adicionarDado(latitude, longitude, pluviometria, data.toLocaleDateString(), dadosBrutos[j].associado, fazenda, umTalhao.plot.name, "SEPARAR POR TALHÕES", umTalhao.harvest_name)
+                    adicionarDado(latitude, longitude, pluviometria, data.toLocaleDateString(), dadosBrutos[j].productor, fazenda, umTalhao.plot.name, "SEPARAR POR TALHÕES", umTalhao.harvest_name)
                 })
 
             })
@@ -156,7 +159,7 @@ export default function Farmbox() {
         dataChuva = new Array();
 
         arrayAux.map(umDado => {
-            adicionarDado(umDado.latitude, umDado.longitude, umDado.pluviometria, umDado.data, umDado.associado, umDado.fazenda, "", "JUNTAR TALHÕES", umDado.safra)
+            adicionarDado(umDado.latitude, umDado.longitude, umDado.pluviometria, umDado.data, umDado.productor, umDado.fazenda, "", "JUNTAR TALHÕES", umDado.safra)
         })
 
         //tirando a média da fazenda toda
@@ -169,7 +172,7 @@ export default function Farmbox() {
 
     }
 
-    function adicionarDado(latitude, longitude, pluviometria, data, associado, fazenda, talhao, id, safra) {
+    function adicionarDado(latitude, longitude, pluviometria, data, productor, fazenda, talhao, id, safra) {
 
         let existe = false;
 
@@ -179,7 +182,7 @@ export default function Farmbox() {
                 latitude: latitude,
                 longitude: longitude,
                 data: data,
-                associado: associado,
+                productor: productor,
                 fazenda: fazenda,
                 talhao: talhao,
                 nVezesRepetido: 1,
@@ -218,7 +221,7 @@ export default function Farmbox() {
                 latitude: latitude,
                 longitude: longitude,
                 data: data,
-                associado: associado,
+                productor: productor,
                 fazenda: fazenda,
                 talhao: talhao,
                 nVezesRepetido: 1,
@@ -245,7 +248,7 @@ export default function Farmbox() {
                     </Grid>
                     <Grid item xs={6}>
                         {showAutoComplete ?
-                            < Paper className={classes.paper}><Autocomplete keys={producerSelect} change={changeAutocomplete} /></Paper>
+                            < Paper className={classes.paper}><Autocomplete keys={producerSelect} change={changeAutocomplete} multiple={true} /></Paper>
                             :
                             < Paper className={classes.paper}>Carregando ...</Paper>
 
