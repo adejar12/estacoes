@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Drawer from '../../components/Drawer'
 import Theme from '../../Theme'
 import Paper from '@material-ui/core/Paper';
@@ -15,21 +15,28 @@ import $ from 'jquery';
 
 export default function Farmbox() {
 
+    const classes = Theme();
+
+    const [selectedDate, setSelectedDate] = useState([null, null]);
+    const [selectedProducer, setSelectedProducer] = useState([]);
     const [isBusy, setIsBusy] = useState(false);
     const [buffer, setBuffer] = useState(10);
     const [progress, setProgress] = useState(0);
+    const [producerSelect, setAssociadosSelect] = useState([]);
+    const [showAutoComplete, setShowAutoComplete] = useState(false)
 
     var dataChuva = new Array()
-    var associadosSelect = new Array();
 
-    keys[3].dados.map(oneKey => {
-        associadosSelect.push(oneKey.associado)
-    })
 
-    const classes = Theme();
-
-    const [selectedDate, setSelectedDate] = React.useState([null, null]);
-    const [selectedProducer, setSelectedProducer] = React.useState([]);
+    useEffect(() => {
+        let array = new Array();
+        keys[3].dados.map(oneKey => {
+            array.push(oneKey.associado)
+        })
+        setAssociadosSelect(array);
+        setSelectedProducer(array);
+        setShowAutoComplete(true)
+    }, [])
 
     function changeDataRangePicker(date) {
         setSelectedDate(date)
@@ -41,12 +48,10 @@ export default function Farmbox() {
 
     async function getDateFarmBox() {
         setIsBusy(true);
-        //console.log(selectedDate[0].toLocaleDateString())
-        //console.log(selectedDate[1].toLocaleDateString())
 
         let associados = new Array();
 
-        await Promise.all(keys[3].dados.map(async oneKey => {
+        await Promise.all(producerSelect(async oneKey => {
             await Promise.all(selectedProducer.map(async (oneProducer, index) => {
                 setProgress(index * 10);
                 let objetoProdutor = {
@@ -239,7 +244,12 @@ export default function Farmbox() {
                         <Paper className={classes.paper}><DataRangePicker onChange={changeDataRangePicker} selectedDate={selectedDate} /></Paper>
                     </Grid>
                     <Grid item xs={6}>
-                        <Paper className={classes.paper}><Autocomplete keys={associadosSelect} change={changeAutocomplete} /></Paper>
+                        {showAutoComplete ?
+                            < Paper className={classes.paper}><Autocomplete keys={producerSelect} change={changeAutocomplete} /></Paper>
+                            :
+                            < Paper className={classes.paper}>Carregando ...</Paper>
+
+                        }
                     </Grid>
                     <Grid item xs={3}>
 

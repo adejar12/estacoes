@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Drawer from '../../components/Drawer'
 import Theme from '../../Theme'
 import Paper from '@material-ui/core/Paper';
@@ -20,12 +20,20 @@ export default function Metos() {
     const [progress, setProgress] = useState(0);
     const [selectedDate, setSelectedDate] = React.useState([null, null]);
     const [selectedProducer, setSelectedProducer] = React.useState([]);
+    const [producerSelect, setProdutoresSelect] = useState([]);
+    const [showAutoComplete, setShowAutoComplete] = useState(false)
 
-    var associadosSelect = new Array();
+    useEffect(() => {
+        let array = new Array();
 
-    keys[0].dados.map(oneKey => {
-        associadosSelect.push(oneKey);
-    })
+        keys[0].dados.map(oneKey => {
+            array.push(oneKey);
+        })
+
+        setProdutoresSelect(array);
+        setSelectedProducer(array)
+        setShowAutoComplete(true)
+    }, [])
 
     const classes = Theme();
 
@@ -227,7 +235,7 @@ export default function Metos() {
 
         let associados = new Array();
 
-        await Promise.all(associadosSelect.map(async umDado => {
+        await Promise.all(producerSelect.map(async umDado => {
             await Promise.all(selectedProducer.map(async oneProducerSelected => {
                 if (umDado.name == oneProducerSelected.name) {
                     let arrayPluviometriaProdutor = new Array();
@@ -271,7 +279,11 @@ export default function Metos() {
                         <Paper className={classes.paper}><DataRangePicker onChange={changeDataRangePicker} selectedDate={selectedDate} /></Paper>
                     </Grid>
                     <Grid item xs={6}>
-                        <Paper className={classes.paper}><Autocomplete keys={associadosSelect} change={changeAutocomplete} multiple={true} /></Paper>
+                        {showAutoComplete ?
+                            <Paper className={classes.paper}><Autocomplete keys={producerSelect} change={changeAutocomplete} multiple={true} /></Paper>
+                            :
+                            < Paper className={classes.paper}>Carregando ...</Paper>
+                        }
                     </Grid>
                     <Grid item xs={3}>
 

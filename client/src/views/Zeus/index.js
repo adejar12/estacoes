@@ -18,14 +18,15 @@ export default function Zeus() {
 
     const classes = Theme();
 
-    const [selectedDate, setSelectedDate] = React.useState([null, null]);
-    const [selectedProducer, setSelectedProducer] = React.useState([]);
+    const [selectedDate, setSelectedDate] = useState([null, null]);
+    const [selectedProducer, setSelectedProducer] = useState([]);
     const [isBusy, setIsBusy] = useState(false);
     const [buffer, setBuffer] = useState(10);
     const [progress, setProgress] = useState(0);
-    const [associadosSelect, setProdutoresSelect] = useState(new Array());
+    const [producerSelect, setProdutoresSelect] = useState(new Array());
     const [usuario, setUsuario] = useState(null);
-    const [associados, setProdutores] = useState(null);
+    const [producers, setProducers] = useState(null);
+    const [showAutoComplete, setShowAutoComplete] = useState(false)
 
     var dataChuva = new Array()
 
@@ -35,17 +36,17 @@ export default function Zeus() {
 
         let usuario = await pegarUsuario();
         setUsuario(usuario)
-        let associados = await pegarProdutores(usuario);
-        setProdutores(associados)
+        let producers = await pegarProdutores(usuario);
+        setProducers(producers)
 
-        associados.forEach(oneProdutor => {
+        producers.forEach(oneProdutor => {
             array.push(oneProdutor);
         })
 
         setProdutoresSelect(array);
-
+        setSelectedProducer(array);
+        setShowAutoComplete(true)
     }, [])
-
 
 
     function changeDataRangePicker(date) {
@@ -67,23 +68,23 @@ export default function Zeus() {
     async function getDateFarmBox() {
         setIsBusy(true);
 
-
         var arrayFinal = new Array();
         await Promise.all(selectedProducer.map(async oneProducerSelected => {
-            for (var i = 0; i < associados.length; i++) {
-                if (oneProducerSelected.picId == associados[i].picId) {
+
+            for (var i = 0; i < producers.length; i++) {
+                if (oneProducerSelected.picId == producers[i].picId) {
 
                     var dadoEstacao = new Array();
                     let date = new Date();
 
                     for (var j = 0; j < diff_weeks(selectedDate[0], new Date()); j++) {
 
-                        dadoEstacao = dadoEstacao.concat(await pegarDadoEstacao(usuario, associados[i], date));
+                        dadoEstacao = dadoEstacao.concat(await pegarDadoEstacao(usuario, producers[i], date));
 
                     }
 
                     var objetoFinal = {
-                        associado: associados[i],
+                        associado: producers[i],
                         dadoEstacao: dadoEstacao
                     }
 
@@ -101,11 +102,11 @@ export default function Zeus() {
 
     }
 
-    function processarDadosZeus(associados) {
+    function processarDadosZeus(producers) {
 
-        for (var i = 0; i < associados.length; i++) {
+        for (var i = 0; i < producers.length; i++) {
 
-            var dadoEstacao = associados[i].dadoEstacao;
+            var dadoEstacao = producers[i].dadoEstacao;
             for (var j = 0; j < dadoEstacao.length; j++) {
                 var date = new Date(dadoEstacao[j].finished);
                 date.setHours(date.getHours() + 3)
@@ -120,19 +121,19 @@ export default function Zeus() {
             tirarMedias()
 
             var novoProdutor = {
-                associado: pegarNomeProdutor(associados[i].associado.name),
-                latitude: associados[i].associado.lat,
-                longitude: associados[i].associado.lon,
-                talhao: pegarTalhao(associados[i].associado.name),
-                fazenda: pegarFazenda(associados[i].associado.name),
+                associado: pegarNomeProdutor(producers[i].associado.name),
+                latitude: producers[i].associado.lat,
+                longitude: producers[i].associado.lon,
+                talhao: pegarTalhao(producers[i].associado.name),
+                fazenda: pegarFazenda(producers[i].associado.name),
                 dataChuva: dataChuva
             }
 
-            associados[i] = novoProdutor;
+            producers[i] = novoProdutor;
             dataChuva = new Array();
         }
 
-        return associados
+        return producers
 
     }
 
@@ -223,9 +224,9 @@ export default function Zeus() {
 
     async function pegarProdutores(usuario) {
 
-        var associados;
+        var producers;
 
-        var associados = {
+        var producers = {
             "url": "http://www.cropnet.us/api/v1/pics",
             "method": "GET",
             "timeout": 0,
@@ -234,11 +235,11 @@ export default function Zeus() {
             },
         };
 
-        await $.ajax(associados).done(function (response) {
-            associados = response;
+        await $.ajax(producers).done(function (response) {
+            producers = response;
         });
 
-        return associados;
+        return producers;
 
     }
 
@@ -282,7 +283,12 @@ export default function Zeus() {
                         <Paper className={classes.paper}><DataRangePicker onChange={changeDataRangePicker} selectedDate={selectedDate} /></Paper>
                     </Grid>
                     <Grid item xs={6}>
-                        <Paper className={classes.paper}><Autocomplete keys={associadosSelect} change={changeAutocomplete} multiple={true} pegarNomeProdutor={pegarNomeProdutor} /></Paper>
+                        {showAutoComplete ?
+                            <Paper className={classes.paper}><Autocomplete keys={producerSelect} change={changeAutocomplete} multiple={true} pegarNomeProdutor={pegarNomeProdutor} /></Paper>
+                            :
+                            < Paper className={classes.paper}>Carregando ...</Paper>
+
+                        }
                     </Grid>
                     <Grid item xs={3}>
 

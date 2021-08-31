@@ -19,11 +19,12 @@ export default function Farmbox() {
     const [isBusy, setIsBusy] = useState(false);
     const [buffer, setBuffer] = useState(10);
     const [progress, setProgress] = useState(0);
-    const [associadosSelect, setProdutoresSelect] = useState([]);
+    const [producerSelect, setProdutoresSelect] = useState([]);
     const [selectedDate, setSelectedDate] = React.useState([null, null]);
     const [selectedProducer, setSelectedProducer] = React.useState([]);
     const [token, setToken] = useState();
     const [empresa, setEmpresa] = useState();
+    const [showAutoComplete, setShowAutoComplete] = useState(false)
 
     var arrayFinal = new Array();
 
@@ -48,6 +49,8 @@ export default function Farmbox() {
         setBuffer(10);
         setProgress(0);
         setProdutoresSelect(array);
+        setSelectedProducer(array);
+        setShowAutoComplete(true)
     }, [])
 
     async function pegarToken() {
@@ -146,7 +149,7 @@ export default function Farmbox() {
     async function getDateFarmBox() {
         setIsBusy(true);
 
-        await Promise.all(associadosSelect.map(async oneKey => {
+        await Promise.all(producerSelect.map(async oneKey => {
 
             let res = oneKey.name.split("-")
 
@@ -236,7 +239,11 @@ export default function Farmbox() {
                         <Paper className={classes.paper}><DataRangePicker onChange={changeDataRangePicker} selectedDate={selectedDate} /></Paper>
                     </Grid>
                     <Grid item xs={6}>
-                        <Paper className={classes.paper}><Autocomplete keys={associadosSelect} change={changeAutocomplete} multiple={true} /></Paper>
+                        {showAutoComplete ?
+                            <Paper className={classes.paper}><Autocomplete keys={producerSelect} change={changeAutocomplete} multiple={true} /></Paper>
+                            :
+                            < Paper className={classes.paper}>Carregando ...</Paper>
+                        }
                     </Grid>
                     <Grid item xs={3}>
 
