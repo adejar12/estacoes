@@ -15,7 +15,14 @@ export function gerarVetorXLSX(array, id) {
 
     let linha = new Array();
     let conteudo = new Array();
-    linha.push("ASSOCIADO", "LATITUDE", "LONGITUDE", "FAZENDA", "DATA", "PLUVIOMETRIA");
+    if (id == "Zeus") {
+        linha.push("ASSOCIADO", "LATITUDE", "LONGITUDE", "FAZENDA", "DATA", "PLUVIOMETRIA"
+            , "TEMPERATURA MINIMA", "TEMPERATURA MAXIMA", "TEMPERATURA INSTANTANEA", "UMIDADE MINIMA", "UMIDADE MAXIMA",
+            "UMIDADE INSTANTANEA", "PRESSÃO ATMOSFERICA MINIMA", "PRESSÃO ATMOSFERICA MAXIMA",
+            "PRESSÃO ATMOSFERICA INSTANTANEA");
+    } else {
+        linha.push("ASSOCIADO", "LATITUDE", "LONGITUDE", "FAZENDA", "DATA", "PLUVIOMETRIA");
+    }
     conteudo.push(linha)
     linha = [];
     if (id == "Protector") {
@@ -59,6 +66,15 @@ export function gerarVetorXLSX(array, id) {
                 linha.push(umAssociado.fazenda)
                 linha.push(toDate(umaChuva.data))
                 linha.push(umaChuva.chuva)
+                linha.push(umaChuva.temperaturaMinima)
+                linha.push(umaChuva.temperaturaMaxima)
+                linha.push(umaChuva.temperaturaInstantanea)
+                linha.push(umaChuva.umidadeMinima)
+                linha.push(umaChuva.umidadeMaxima)
+                linha.push(umaChuva.umidadeInstantanea)
+                linha.push(umaChuva.pressaoAtmosfericaMinima)
+                linha.push(umaChuva.pressaoAtmosfericaMaxima)
+                linha.push(umaChuva.pressaoAtmosfericaInstantanea)
                 conteudo.push(linha)
             });
 
